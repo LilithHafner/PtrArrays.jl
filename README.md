@@ -64,3 +64,6 @@ end
 @b g(1000)
 # 130.125 ns (3 allocs: 7.875 KiB)
 ```
+
+The whole package's source code is only about 25 lines (exlcuding comments and whitespace).
+[Read it here](https://github.com/LilithHafner/MallocArrays.jl/blob/main/src/MallocArrays.jl)
