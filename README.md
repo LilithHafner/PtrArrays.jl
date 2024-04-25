@@ -7,6 +7,8 @@
 
 Do you miss playing hide and seek with memory leaks? Do you find GC overhead problematic?
 MallocArrays.jl can take you back to the good old days of manual memory management.
+See also [Bumper.jl](https://github.com/MasonProtter/Bumper.jl) if you want to avoid GC
+overhead and don't like hide and seek.
 
 This package provides `malloc(T, dims...)` which allocates an `AbstractArray{T}` with the
 provided `dims`. If you want, you can call `free` on the array once you're done using it
