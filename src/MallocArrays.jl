@@ -12,13 +12,13 @@ end
 
 Allocate a new array of type `T` and dimensions `dims` using the C stdlib's `malloc`.
 
+`T` must be an `isbitstype`.
+
 This array is not tracked by Julia's garbage collector, so it is the user's responsibility
 to call [`free`](@ref) on it when it is no longer needed.
-
-Non-isbits GC managed objects stored in a MallocArray must be rooted elsewhere or they may
-be garbage collected.
 """
 function malloc(::Type{T}, dims::Int...) where T
+    isbitstype(T) || throw(ArgumentError("malloc only supports isbits types"))
     MallocArray(Ptr{T}(Libc.malloc(sizeof(T) * prod(dims))), dims)
 end
 
