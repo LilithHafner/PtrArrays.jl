@@ -7,6 +7,25 @@ struct MallocArray{T, N} <: AbstractArray{T, N}
     size::NTuple{N, Int}
 end
 
+# Because Core.checked_dims is buggy 😢
+checked_dims(elsize::Int) = elsize
+function checked_dims(elsize::Int, d0::Int, d::Int...)
+    overflow = false
+    neg = (d0+1) < 1
+    zero = false # of d0==0 we won't have overflow since we go left to right
+    len = d0
+    for di in d
+        len, o = Base.mul_with_overflow(len, di)
+        zero |= di === 0
+        overflow |= o
+        neg |= (di+1) < 1
+    end
+    len, o = Base.mul_with_overflow(len, elsize)
+    err = o | neg | overflow & !zero
+    err && throw(ArgumentError("invalid malloc dimensions"))
+    len
+end
+
 """
     malloc(T::Type, dims::Int...) -> MallocArray{T, N} <: AbstractArray{T, N}
 
@@ -19,7 +38,9 @@ to call [`free`](@ref) on it when it is no longer needed.
 """
 function malloc(::Type{T}, dims::Int...) where T
     isbitstype(T) || throw(ArgumentError("malloc only supports isbits types"))
-    MallocArray(Ptr{T}(Libc.malloc(sizeof(T) * prod(dims))), dims)
+    ptr = Libc.malloc(checked_dims(sizeof(T), dims...))
+    ptr === C_NULL && throw(OutOfMemoryError())
+    MallocArray(Ptr{T}(ptr), dims)
 end
 
 """

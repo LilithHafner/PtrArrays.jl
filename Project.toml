@@ -1,7 +1,7 @@
 name = "MallocArrays"
 uuid = "bdde6022-96f5-457e-ae5c-df64ce731513"
 authors = ["Lilith Orion Hafner <lilithhafner@gmail.com> and contributors"]
-version = "1.0.0"
+version = "1.0.1"
 
 [compat]
 julia = "1"

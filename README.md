@@ -65,7 +65,8 @@ end
 # 130.125 ns (3 allocs: 7.875 KiB)
 ```
 
-The whole package's source code is only about 25 lines (exlcuding comments and whitespace).
+The whole package's source code is only about 44 lines (excluding comments and whitespace),
+half of which is re-implementing Julia's buggy `Core.checked_dims` function.
 [Read it here](https://github.com/LilithHafner/MallocArrays.jl/blob/main/src/MallocArrays.jl)
 
 ## Alternatives
@@ -76,9 +77,10 @@ you to manage your own allocation stack, bypassing the Julia GC.
 [StaticTools.jl](https://github.com/brenhinkeller/) is a much larger package which provides, among other
 things, a [MallocArray](https://brenhinkeller.github.io/StaticTools.jl/dev/#StaticTools.MallocArray)
 type that behaves similarly to this package's MallocArray. As StaticTools.jl is meant to run
-without the Julia runtime, it does not make use of features such as exceptions. Consequenly all
+without the Julia runtime, it does not make use of features such as exceptions. Consequently, all
 usages of StaticTools.MallocArray are implicitly annotated with `@inbounds` and out of bounds
-accesses are UB instead of errors. In general, StaticTools.jl's MallocArray can be thagut of
-as "unsafe" while MallocArrays.MallocArray is "safe" (though memory leaks will still occur if
-you fail to call free)
+accesses are UB instead of errors, StaticTools.MallocArray with invalid indices will return
+a null pointer with size zero while MallocArrays will throw, etc. In general, StaticTools.jl's
+MallocArray can be thought of as "unsafe" while MallocArrays.MallocArray is "safe" (though
+memory leaks will still occur if you fail to call free)
 

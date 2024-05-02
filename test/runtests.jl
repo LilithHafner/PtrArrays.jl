@@ -52,3 +52,16 @@ end
     @test f(10, 1:10) == 55
     @test 0 == @allocated f(10, 1:10)
 end
+
+@testset "Invalid dimensions" begin
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, -10, 10, 0)
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 1000000, 1000000, 1000000, 1000000)
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Nothing, 1000000, 1000000, 1000000, 1000000)
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(Sys.WORD_SIZE-4))
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(Sys.WORD_SIZE-2)-1)
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(Sys.WORD_SIZE-3)-1)
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(Sys.WORD_SIZE-2))
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(Sys.WORD_SIZE-3))
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(UInt128, 2^3, 2^(Sys.WORD_SIZE-5))
+    @test_throws OutOfMemoryError() malloc(Int, 2^(Sys.WORD_SIZE-5))
+end
