@@ -1,12 +1,12 @@
-# MallocArrays
+# PtrArrays
 
-[![Build Status](https://github.com/LilithHafner/MallocArrays.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/LilithHafner/MallocArrays.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/LilithHafner/MallocArrays.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/LilithHafner/MallocArrays.jl)
-[![PkgEval](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/M/MallocArrays.svg)](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/M/MallocArrays.html)
+[![Build Status](https://github.com/LilithHafner/PtrArrays.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/LilithHafner/PtrArrays.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/LilithHafner/PtrArrays.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/LilithHafner/PtrArrays.jl)
+[![PkgEval](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/P/PtrArrays.svg)](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/P/PtrArrays.html)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 Do you miss playing hide and seek with memory leaks? Do you find GC overhead problematic?
-MallocArrays.jl can take you back to the good old days of manual memory management.
+PtrArrays.jl can take you back to the good old days of manual memory management.
 See also [Bumper.jl](https://github.com/MasonProtter/Bumper.jl) if you want to avoid GC
 overhead and don't like hide and seek.
 
@@ -18,7 +18,7 @@ Example usage
 
 ```julia
 julia> malloc(Int, 4)
-4-element MallocArray{Int64, 1}:
+4-element PtrArray{Int64, 1}:
  1053122630
           0
   936098496
@@ -27,7 +27,7 @@ julia> malloc(Int, 4)
 julia> free(ans)
 
 julia> malloc(Int, 4, 4)
-4×4 MallocArray{Int64, 2}:
+4×4 PtrArray{Int64, 2}:
        923300075       1046634192       1046634192       1046634408
                0              120              124              152
                0                0                0                0
@@ -39,7 +39,7 @@ julia> free(ans)
 Benchmarks:
 
 ```julia
-using MallocArrays
+using PtrArrays
 function f(n)
     x = malloc(Int, n)
     try
@@ -67,20 +67,23 @@ end
 
 The whole package's source code is only about 44 lines (excluding comments and whitespace),
 half of which is re-implementing Julia's buggy `Core.checked_dims` function.
-[Read it here](https://github.com/LilithHafner/MallocArrays.jl/blob/main/src/MallocArrays.jl)
+[Read it here](https://github.com/LilithHafner/PtrArrays.jl/blob/main/src/PtrArrays.jl)
 
 ## Alternatives
 
 [Bumper.jl](https://github.com/MasonProtter/Bumper.jl) provides bump allocators which allow
 you to manage your own allocation stack, bypassing the Julia GC.
 
-[StaticTools.jl](https://github.com/brenhinkeller/) is a much larger package which provides, among other
-things, a [MallocArray](https://brenhinkeller.github.io/StaticTools.jl/dev/#StaticTools.MallocArray)
-type that behaves similarly to this package's MallocArray. As StaticTools.jl is meant to run
-without the Julia runtime, it does not make use of features such as exceptions. Consequently, all
-usages of StaticTools.MallocArray are implicitly annotated with `@inbounds` and out of bounds
+[StaticTools.jl](https://github.com/brenhinkeller/) is a much larger package which provides,
+among other things, a
+[MallocArray](https://brenhinkeller.github.io/StaticTools.jl/dev/#StaticTools.MallocArray)
+type that behaves similarly to PtrArray. As StaticTools.jl is meant to run without the Julia
+runtime, it does not make use of features such as exceptions. Consequently, all usages of
+`StaticTools.MallocArray` are implicitly annotated with `@inbounds` and out of bounds
 accesses are UB instead of errors, StaticTools.MallocArray with invalid indices will return
-a null pointer with size zero while MallocArrays will throw, etc. In general, StaticTools.jl's
-MallocArray can be thought of as "unsafe" while MallocArrays.MallocArray is "safe" (though
-memory leaks will still occur if you fail to call free)
+a null pointer with size zero while PtrArrays will throw, etc. In general, StaticTools.jl's
+`MallocArray` can be thought of as "unsafe" while `PtrArray` is "safe" (though memory leaks
+will still occur if you call `malloc` and fail to call `free`)
 
+[MallocArrays.jl](https://github.com/LilithHafner/PtrArrays.jl/tree/0b6dbdc012e1058b2b64d0f94863eff4120def85)
+is the original name of this package. It is obsolete.

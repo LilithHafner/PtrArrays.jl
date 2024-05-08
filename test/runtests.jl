@@ -1,16 +1,16 @@
-using MallocArrays
+using PtrArrays
 using Test
 using Aqua
 
 @testset "Code quality (Aqua.jl)" begin
-    Aqua.test_all(MallocArrays, deps_compat=false)
-    Aqua.test_deps_compat(MallocArrays, check_extras=false)
+    Aqua.test_all(PtrArrays, deps_compat=false)
+    Aqua.test_deps_compat(PtrArrays, check_extras=false)
 end
 
 @testset "Basics" begin
     x = malloc(Int, 10)
     @test x isa AbstractVector{Int}
-    @test x isa MallocArray
+    @test x isa PtrArray
 
     x .= 1:10
     @test x == 1:10
@@ -26,7 +26,7 @@ end
     @test length(y) == 40
     @test size(y) == (4, 10)
     @test y isa AbstractMatrix{Complex{Float64}}
-    @test y isa MallocArray
+    @test y isa PtrArray
 
     fill!(y, im)
     @test all(z -> z === 1.0im, y)
