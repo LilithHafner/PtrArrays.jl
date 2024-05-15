@@ -4,6 +4,7 @@
 [![Coverage](https://codecov.io/gh/LilithHafner/PtrArrays.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/LilithHafner/PtrArrays.jl)
 [![PkgEval](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/P/PtrArrays.svg)](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/P/PtrArrays.html)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
+[![deps](https://juliahub.com/docs/General/PtrArrays/stable/deps.svg)](https://juliahub.com/ui/Packages/General/PtrArrays?t=2)
 
 Do you miss playing hide and seek with memory leaks? Do you find GC overhead problematic?
 PtrArrays.jl can take you back to the good old days of manual memory management.
