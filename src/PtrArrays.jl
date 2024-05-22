@@ -3,9 +3,9 @@ module PtrArrays
 export malloc, free, PtrArray
 
 """
-    PtrArray(ptr::Ptr{T}, dims::Int...; check_dims=true) <: AbstractArray{T}
+    PtrArray(ptr::Ptr{T}, dims::Int...; check_dims=true) <: DenseArray{T}
 
-Wrap a pointer in an `AbstractArray` interface conformant `PtrArray` using the standard
+Wrap a pointer in an `DenseArray` interface conformant `PtrArray` using the standard
 Julia memory order.
 
 Validates that `dims` are non-negative and don't overflow when multiplied if `check_dims` is
@@ -20,7 +20,7 @@ overflowing `dims`.
 
 see also [`malloc`](@ref), [`free`](@ref)
 """
-struct PtrArray{T, N} <: AbstractArray{T, N}
+struct PtrArray{T, N} <: DenseArray{T, N}
     ptr::Ptr{T}
     size::NTuple{N, Int}
     function PtrArray(ptr::Ptr{T}, dims::Vararg{Int, N}; check_dims=true) where {T, N}
@@ -86,5 +86,10 @@ Base.@propagate_inbounds function Base.setindex!(p::PtrArray, v, i::Int)
     unsafe_store!(p.ptr, v, i)
     p
 end
+
+# Strided array interface
+Base.strides(p::PtrArray) = Base.size_to_strides(1, size(p)...)
+Base.unsafe_convert(::Type{Ptr{T}}, A::PtrArray{T}) where {T} = p.ptr
+Base.elsize(::Type{P}) where {P<:PtrArray} = sizeof(eltype(P))
 
 end
