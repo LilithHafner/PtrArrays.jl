@@ -88,8 +88,8 @@ Base.@propagate_inbounds function Base.setindex!(p::PtrArray, v, i::Int)
 end
 
 # Strided array interface https://docs.julialang.org/en/v1/manual/interfaces/#man-interface-strided-arrays
-Base.strides(p::PtrArray) = Base.size_to_strides(1, size(p)...)
 Base.unsafe_convert(::Type{Ptr{T}}, p::PtrArray{T}) where T = p.ptr
 Base.elsize(::Type{P}) where P<:PtrArray = sizeof(eltype(P))
+Base.strides(p::PtrArray) = (1, accumulate(*, Base.front(size(p)))...)
 
 end
