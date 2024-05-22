@@ -47,7 +47,7 @@ end
     @test length(z) == 240
     @test size(z) == (4, 6, 10)
     @test strides(z) == (1, 4, 24)
-    @test elsize(z) == sizeof(Int)
+    @test Base.elsize(z) == sizeof(Int)
     @test z isa PtrArray
     @test z isa DenseArray{Int, 3}
     free(z)
