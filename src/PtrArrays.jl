@@ -9,7 +9,7 @@ Wrap a pointer in an `DenseArray` interface conformant `PtrArray` using the stan
 Julia memory order.
 
 Validates that `dims` are non-negative and don't overflow when multiplied if `check_dims` is
-true. Wierd things might happen if you set `check_dims=false` and use nagative or
+true. Weird things might happen if you set `check_dims=false` and use negative or
 overflowing `dims`.
 
 !!! note
@@ -71,7 +71,7 @@ end
 Free the memory allocated by a [`PtrArray`](@ref) allocated by [`malloc`](@ref).
 
 It is only safe to call this function on `PtrArray`s returned by `malloc`, and it is unsafe
-to perform any opperation on a `PtrArray` after calling `free`.
+to perform any operation on a `PtrArray` after calling `free`.
 """
 free(p::PtrArray) = Libc.free(p.ptr)
 
