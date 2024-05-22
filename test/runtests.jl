@@ -9,6 +9,7 @@ end
 
 @testset "Basics" begin
     x = malloc(Int, 10)
+    @test x isa AbstractVector{Int}
     @test x isa DenseVector{Int}
     @test x isa PtrArray
 
@@ -40,13 +41,16 @@ end
     @test free(y) === nothing
 
     @test_throws ArgumentError malloc(Vector{Int}, 10)
-    
+
+    # Strided array API
     z = malloc(Int, 4, 6, 10)
     @test length(z) == 240
     @test size(z) == (4, 6, 10)
     @test strides(z) == (1, 4, 24)
+    @test elsize(z) == sizeof(Int)
     @test z isa PtrArray
     @test z isa DenseArray{Int, 3}
+    free(z)
 end
 
 function f(x, y)
