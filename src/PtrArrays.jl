@@ -3,13 +3,13 @@ module PtrArrays
 export malloc, free, PtrArray
 
 """
-    PtrArray(ptr::Ptr{T}, dims::Int...; check_dims=true) <: AbstractArray{T}
+    PtrArray(ptr::Ptr{T}, dims::Int...; check_dims=true) <: DenseArray{T}
 
-Wrap a pointer in an `AbstractArray` interface conformant `PtrArray` using the standard
+Wrap a pointer in an `DenseArray` interface conformant `PtrArray` using the standard
 Julia memory order.
 
 Validates that `dims` are non-negative and don't overflow when multiplied if `check_dims` is
-true. Wierd things might happen if you set `check_dims=false` and use nagative or
+true. Weird things might happen if you set `check_dims=false` and use negative or
 overflowing `dims`.
 
 !!! note
@@ -20,7 +20,7 @@ overflowing `dims`.
 
 see also [`malloc`](@ref), [`free`](@ref)
 """
-struct PtrArray{T, N} <: AbstractArray{T, N}
+struct PtrArray{T, N} <: DenseArray{T, N}
     ptr::Ptr{T}
     size::NTuple{N, Int}
     function PtrArray(ptr::Ptr{T}, dims::Vararg{Int, N}; check_dims=true) where {T, N}
@@ -71,7 +71,7 @@ end
 Free the memory allocated by a [`PtrArray`](@ref) allocated by [`malloc`](@ref).
 
 It is only safe to call this function on `PtrArray`s returned by `malloc`, and it is unsafe
-to perform any opperation on a `PtrArray` after calling `free`.
+to perform any operation on a `PtrArray` after calling `free`.
 """
 free(p::PtrArray) = Libc.free(p.ptr)
 
@@ -86,5 +86,9 @@ Base.@propagate_inbounds function Base.setindex!(p::PtrArray, v, i::Int)
     unsafe_store!(p.ptr, v, i)
     p
 end
+
+# Strided array interface https://docs.julialang.org/en/v1/manual/interfaces/#man-interface-strided-arrays
+Base.unsafe_convert(::Type{Ptr{T}}, p::PtrArray{T}) where T = p.ptr
+Base.elsize(::Type{P}) where P<:PtrArray = sizeof(eltype(P))
 
 end
