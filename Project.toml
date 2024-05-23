@@ -1,7 +1,7 @@
 name = "PtrArrays"
 uuid = "43287f4e-b6f4-7ad1-bb20-aadabca52c3d"
 authors = ["Lilith Orion Hafner <lilithhafner@gmail.com> and contributors"]
-version = "1.1.0"
+version = "1.2.0"
 
 [compat]
 julia = "1"
