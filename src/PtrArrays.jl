@@ -30,7 +30,7 @@ struct PtrArray{T, N} <: DenseArray{T, N}
 end
 
 # Because Core.checked_dims is buggy 😢
-checked_dims(elsize::Int) = elsize
+checked_dims(elsize::Int; message) = elsize
 function checked_dims(elsize::Int, d0::Int, d::Int...; message)
     overflow = false
     neg = (d0+1) < 1

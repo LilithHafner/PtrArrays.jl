@@ -53,6 +53,14 @@ end
     free(z)
 end
 
+@testset "zero-dimensional (#16)" begin
+    s = @inferred malloc(Int32)
+    @test s isa PtrArray{Int32, 0}
+    s[] = 7
+    @test Int32(7) === @inferred s[]
+    free(s)
+end
+
 function f(x, y)
     z = malloc(Int, x)
     z .= y
