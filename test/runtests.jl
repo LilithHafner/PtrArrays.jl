@@ -60,9 +60,10 @@ function f(x, y)
     free(z)
     res
 end
+const some_range = 1:10
 @testset "Allocations" begin
     @test f(10, 1:10) == 55
-    @test 0 == @allocated f(10, 1:10)
+    @test 0 == @allocated f(10, some_range)
 end
 
 @testset "Invalid dimensions" begin
