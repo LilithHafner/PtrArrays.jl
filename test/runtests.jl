@@ -8,13 +8,6 @@ using Aqua
 end
 
 @testset "Basics" begin
-    @testset "zero-dimensional" begin
-        s = @inferred malloc(Int32)
-        @test s isa PtrArray{Int32, 0}
-        s[] = 7
-        @test Int32(7) === @inferred s[]
-        free(s)
-    end
     x = malloc(Int, 10)
     @test x isa AbstractVector{Int}
     @test x isa DenseVector{Int}
@@ -58,6 +51,14 @@ end
     @test z isa PtrArray
     @test z isa DenseArray{Int, 3}
     free(z)
+end
+
+@testset "zero-dimensional (#16)" begin
+    s = @inferred malloc(Int32)
+    @test s isa PtrArray{Int32, 0}
+    s[] = 7
+    @test Int32(7) === @inferred s[]
+    free(s)
 end
 
 function f(x, y)
