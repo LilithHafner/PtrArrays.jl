@@ -94,6 +94,7 @@ end
 @testset "Invalid dimensions" begin
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, -10, 10, 0)
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 1000000, 1000000, 1000000, 1000000)
+    @test_throws ArgumentError("invalid malloc dimensions") malloc(Nothing, 1000000, 1000000, 1000000, 1000000)
     words_in_word_size = Sys.WORD_SIZE - Int(log2(sizeof(Int)))
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(words_in_word_size-1))
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(words_in_word_size+1)-1)
@@ -102,9 +103,4 @@ end
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(words_in_word_size))
     @test_throws ArgumentError("invalid malloc dimensions") malloc(UInt128, 2^3, 2^(Sys.WORD_SIZE-5))
     Sys.WORD_SIZE == 64 && @test_throws OutOfMemoryError() malloc(Int, 2^(Sys.WORD_SIZE-5)) # We could actually have enough memory on 32-bit systems
-
-    x = malloc(Nothing, 1000000, 1000000, 1000000, 1000000)
-    @test x[1] === x[end] === x[1, end, 1, end] === nothing
-    @test all(x -> x === nothing, Iterators.take(x, 100))
-    @test all(x -> x === nothing, rand(x, 100))
 end
