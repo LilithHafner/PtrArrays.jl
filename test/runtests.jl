@@ -68,15 +68,32 @@ function f(x, y)
     free(z)
     res
 end
+function g(::Val{N}) where N
+    z = malloc(Int, ntuple(i -> 2, Val(N))...)
+    free(z)
+end
 @testset "Allocations" begin
     @test f(10, 1:10) == 55
     @test 0 == @allocated f(10, 1:10)
+    @test g(Val(0)) === nothing
+    @test g(Val(1)) === nothing
+    @test g(Val(2)) === nothing
+    @test g(Val(3)) === nothing
+    @test g(Val(4)) === nothing
+    @test g(Val(10)) === nothing
+    @test g(Val(15)) === nothing
+    @test 0 == @allocated g(Val(0))
+    @test 0 == @allocated g(Val(1))
+    @test 0 == @allocated g(Val(2))
+    @test 0 == @allocated g(Val(3))
+    @test 0 == @allocated g(Val(4))
+    @test 0 == @allocated g(Val(10))
+    @test 0 == @allocated g(Val(15))
 end
 
 @testset "Invalid dimensions" begin
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, -10, 10, 0)
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 1000000, 1000000, 1000000, 1000000)
-    @test_throws ArgumentError("invalid malloc dimensions") malloc(Nothing, 1000000, 1000000, 1000000, 1000000)
     words_in_word_size = Sys.WORD_SIZE - Int(log2(sizeof(Int)))
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(words_in_word_size-1))
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(words_in_word_size+1)-1)
@@ -85,4 +102,9 @@ end
     @test_throws ArgumentError("invalid malloc dimensions") malloc(Int, 2^(words_in_word_size))
     @test_throws ArgumentError("invalid malloc dimensions") malloc(UInt128, 2^3, 2^(Sys.WORD_SIZE-5))
     Sys.WORD_SIZE == 64 && @test_throws OutOfMemoryError() malloc(Int, 2^(Sys.WORD_SIZE-5)) # We could actually have enough memory on 32-bit systems
+
+    x = malloc(Nothing, 1000000, 1000000, 1000000, 1000000)
+    @test x[begin] === x[end] === x[begin, end, begin, end] === x[978233, 812739, 271782, 184723] === nothing
+    @test all(isnothing, Iterators.take(x, 100))
+    @test all(isnothing, rand(x, 100))
 end

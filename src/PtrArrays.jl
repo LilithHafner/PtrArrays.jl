@@ -30,22 +30,15 @@ struct PtrArray{T, N} <: DenseArray{T, N}
 end
 
 # Because Core.checked_dims is buggy 😢
-checked_dims(elsize::Int; message) = elsize
-function checked_dims(elsize::Int, d0::Int, d::Int...; message)
-    overflow = false
-    neg = (d0+1) < 1
-    zero = false # of d0==0 we won't have overflow since we go left to right
-    len = d0
-    for di in d
-        len, o = Base.mul_with_overflow(len, di)
-        zero |= di === 0
-        overflow |= o
-        neg |= (di+1) < 1
+checked_dims(pre_checked::Int; message) = pre_checked
+function checked_dims(pre_checked::Int, d::Int, ds::Int...; message)
+    d+1 < 1 && throw(ArgumentError("invalid $message dimensions"))
+    product, o = Base.mul_with_overflow(pre_checked, d)
+    if o
+        any(iszero, ds) && return 0
+        throw(ArgumentError("invalid $message dimensions"))
     end
-    len, o = Base.mul_with_overflow(len, elsize)
-    err = o | neg | overflow & !zero
-    err && throw(ArgumentError("invalid $message dimensions"))
-    len
+    checked_dims(product, ds...; message=message)
 end
 
 """
