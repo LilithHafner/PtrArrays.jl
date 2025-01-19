@@ -105,6 +105,6 @@ end
 
     x = malloc(Nothing, 1000000, 1000000, 1000000, 1000000)
     @test x[1] === x[end] === x[1, end, 1, end] === nothing
-    @test all(isnothing, Iterators.take(x, 100))
-    @test all(isnothing, rand(x, 100))
+    @test all(x -> x === nothing, Iterators.take(x, 100))
+    @test all(x -> x === nothing, rand(x, 100))
 end
