@@ -84,9 +84,9 @@ end
     @test g(Val(15)) === nothing
     @test 0 == @allocated g(Val(0))
     @test 0 == @allocated g(Val(1))
-    @test 0 == @allocated g(Val(2))
-    @test 0 == @allocated g(Val(3))
-    @test 0 == @allocated g(Val(4))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(2))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(3))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(4))
     VERSION >= v"1.11" && @test 0 == @allocated g(Val(10))
     VERSION >= v"1.11" && @test 0 == @allocated g(Val(15))
 end

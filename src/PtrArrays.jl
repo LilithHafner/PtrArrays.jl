@@ -30,15 +30,17 @@ struct PtrArray{T, N} <: DenseArray{T, N}
 end
 
 # Because Core.checked_dims is buggy 😢
-checked_dims(d0::Int; message) = d0
-function checked_dims(d0::Int, d1::Int, ds::Vararg{Int, N}; message) where N
-    d0+1 < 1 && throw(ArgumentError("invalid $message dimensions"))
-    product, o = Base.mul_with_overflow(d0, d1)
-    if o
-        !isempty(ds) && any(iszero, Base.front(ds)) && return 0
-        throw(ArgumentError("invalid $message dimensions"))
+function checked_dims(d0::Int, ds::Vararg{Int, N}; message) where N
+    @static VERSION >= v"1.10" && Base.@assume_effects :terminates_locally
+    for d in ds
+        d0+1 < 1 && throw(ArgumentError("invalid $message dimensions"))
+        d0, o = Base.mul_with_overflow(d0, d)
+        if o
+            !isempty(ds) && any(iszero, Base.front(ds)) && return 0
+            throw(ArgumentError("invalid $message dimensions"))
+        end
     end
-    checked_dims(product, ds...; message=message)
+    d0
 end
 
 """
