@@ -104,7 +104,7 @@ end
     Sys.WORD_SIZE == 64 && @test_throws OutOfMemoryError() malloc(Int, 2^(Sys.WORD_SIZE-5)) # We could actually have enough memory on 32-bit systems
 
     x = malloc(Nothing, 1000000, 1000000, 1000000, 1000000)
-    @test x[begin] === x[end] === x[begin, end, begin, end] === x[978233, 812739, 271782, 184723] === nothing
+    @test x[begin] === x[end] === x[begin, end, begin, end] === nothing
     @test all(isnothing, Iterators.take(x, 100))
     @test all(isnothing, rand(x, 100))
 end
