@@ -31,7 +31,7 @@ end
 
 # Because Core.checked_dims is buggy 😢
 checked_dims(pre_checked::Int; message) = pre_checked
-function checked_dims(pre_checked::Int, d::Int, ds::Int...; message)
+function checked_dims(pre_checked::Int, d::Int, ds::Vararg{Int, N}; message) where N
     d+1 < 1 && throw(ArgumentError("invalid $message dimensions"))
     product, o = Base.mul_with_overflow(pre_checked, d)
     if o
