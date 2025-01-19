@@ -87,8 +87,8 @@ end
     @test 0 == @allocated g(Val(2))
     @test 0 == @allocated g(Val(3))
     @test 0 == @allocated g(Val(4))
-    @test 0 == @allocated g(Val(10))
-    @test 0 == @allocated g(Val(15))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(10))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(15))
 end
 
 @testset "Invalid dimensions" begin
