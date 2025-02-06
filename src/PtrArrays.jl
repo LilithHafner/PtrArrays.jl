@@ -1,5 +1,7 @@
 module PtrArrays
 
+using CheckedSizeProduct
+
 export malloc, free, PtrArray
 
 """
@@ -32,19 +34,13 @@ end
 # Because Core.checked_dims is buggy 😢
 checked_dims(elsize::Int; message) = elsize
 function checked_dims(elsize::Int, d0::Int, d::Int...; message)
-    overflow = false
-    neg = (d0+1) < 1
-    zero = false # of d0==0 we won't have overflow since we go left to right
-    len = d0
-    for di in d
-        len, o = Base.mul_with_overflow(len, di)
-        zero |= di === 0
-        overflow |= o
-        neg |= (di+1) < 1
+    throw_argument_error = let message = message
+        () -> throw(ArgumentError("invalid $message dimensions"))
     end
+    len = checked_size_product((d0, d...))
+    (len isa Int) || throw_argument_error()
     len, o = Base.mul_with_overflow(len, elsize)
-    err = o | neg | overflow & !zero
-    err && throw(ArgumentError("invalid $message dimensions"))
+    o && throw_argument_error()
     len
 end
 
