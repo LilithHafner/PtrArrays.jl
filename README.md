@@ -75,7 +75,7 @@ half of which is re-implementing Julia's buggy `Core.checked_dims` function.
 [Bumper.jl](https://github.com/MasonProtter/Bumper.jl) provides bump allocators which allow
 you to manage your own allocation stack, bypassing the Julia GC.
 
-[StaticTools.jl](https://github.com/brenhinkeller/) is a much larger package which provides,
+[StaticTools.jl](https://github.com/brenhinkeller/StaticTools.jl) is a much larger package which provides,
 among other things, a
 [MallocArray](https://brenhinkeller.github.io/StaticTools.jl/dev/#StaticTools.MallocArray)
 type that behaves similarly to PtrArray. As StaticTools.jl is meant to run without the Julia
