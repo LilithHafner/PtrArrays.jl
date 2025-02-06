@@ -68,9 +68,27 @@ function f(x, y)
     free(z)
     res
 end
+function g(::Val{N}) where N
+    z = malloc(Int, ntuple(i -> 2, Val(N))...)
+    free(z)
+end
 @testset "Allocations" begin
     @test f(10, 1:10) == 55
     @test 0 == @allocated f(10, 1:10)
+    @test g(Val(0)) === nothing
+    @test g(Val(1)) === nothing
+    @test g(Val(2)) === nothing
+    @test g(Val(3)) === nothing
+    @test g(Val(4)) === nothing
+    @test g(Val(10)) === nothing
+    @test g(Val(15)) === nothing
+    @test 0 == @allocated g(Val(0))
+    @test 0 == @allocated g(Val(1))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(2))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(3))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(4))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(10))
+    VERSION >= v"1.11" && @test 0 == @allocated g(Val(15))
 end
 
 @testset "Invalid dimensions" begin
