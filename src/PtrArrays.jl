@@ -65,6 +65,19 @@ function malloc(::Type{T}, dims::Int...) where T
     PtrArray(Ptr{T}(ptr), dims..., check_dims=false)
 end
 
+function PtrArray{T, N}(::UndefInitializer, dims::Vararg{Int, N}) where {T, N}
+    malloc(T, dims...)
+end
+function PtrArray{T, N}(::UndefInitializer, dims::Tuple{Vararg{Int, N}}) where {T, N}
+    malloc(T, dims...)
+end
+function PtrArray{T}(::UndefInitializer, dims::Vararg{Int}) where {T}
+    malloc(T, dims...)
+end
+function PtrArray{T}(::UndefInitializer, dims::Tuple{Vararg{Int}}) where {T}
+    malloc(T, dims...)
+end
+
 """
     free(p::PtrArray)
 

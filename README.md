@@ -37,6 +37,17 @@ julia> malloc(Int, 4, 4)
 julia> free(ans)
 ```
 
+It is also possible to construct a `PtrArray` using the usual array constructor interface with `undef`:
+
+```julia-repl
+julia> PtrArray{Float64}(undef, 4, 4)
+4×4 PtrArray{Float64, 2}:
+ 7.01389e-316  7.2e-322    2.0e-323   0.0
+ 0.0           1.294e-321  2.47e-322  0.0
+ 4.2e-322      0.0         2.87e-322  6.37223e-316
+ 5.53e-322     0.0         4.05e-322  4.24399e-314
+```
+
 Benchmarks:
 
 ```julia

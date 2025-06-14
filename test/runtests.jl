@@ -61,6 +61,15 @@ end
     free(s)
 end
 
+@testset "undef constructors" begin
+    @test (@inferred PtrArray{Float32}(undef, 3, 3)) isa PtrArray{Float32, 2}
+    @test (@inferred PtrArray{Float32}(undef, (3, 3))) isa PtrArray{Float32, 2}
+    @test (@inferred PtrArray{Float32, 2}(undef, 3, 3)) isa PtrArray{Float32, 2}
+    @test (@inferred PtrArray{Float32, 2}(undef, (3, 3))) isa PtrArray{Float32, 2}
+    @test_throws MethodError PtrArray{Float32, 2}(undef, 3)
+    @test_throws MethodError PtrArray{Float32, 2}(undef, (3,))
+end
+
 function f(x, y)
     z = malloc(Int, x)
     z .= y
