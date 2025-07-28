@@ -12,8 +12,8 @@ See also [Bumper.jl](https://github.com/MasonProtter/Bumper.jl) if you want to a
 overhead and don't like hide and seek.
 
 This package provides `malloc(T, dims...)` which allocates an `AbstractArray{T}` with the
-provided `dims`. If you want, you can call `free` on the array once you're done using it
-but it can be more fun to see what happens if you don't.
+provided `dims`. If you want to avoid memory leaks, you can call `free` on the array once 
+you're done using it.
 
 Example usage
 
