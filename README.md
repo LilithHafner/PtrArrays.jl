@@ -15,10 +15,8 @@ This package provides `malloc(T, dims...)` which allocates an `AbstractArray{T}`
 provided `dims`. If you want to avoid memory leaks, you can call `free` on the array once 
 you're done using it.
 
-A functional interface is available as `malloc(func, t, dims...)`, which takes care of
-allocation and deallocation automatically before/after calling `func(newly_allocated)`.
-The return value of `func(a)` must not contain any reference to `a`, to avoid
-use-after-free risk.
+A functional interface is also available as `malloc(func, t, dims...)`, taking care of
+allocation and deallocation automatically.
 
 Example usage
 
