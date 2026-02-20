@@ -91,4 +91,15 @@ end
 Base.unsafe_convert(::Type{Ptr{T}}, p::PtrArray{T}) where T = p.ptr
 Base.elsize(::Type{P}) where P<:PtrArray = sizeof(eltype(P))
 
+function malloc(func::Func, ::Type{T}, dims::Int...) where {Func, T}
+    a = malloc(T, dims...)
+    local r
+    try
+        r = func(a)
+    finally
+        free(a)
+    end
+    r
+end
+
 end

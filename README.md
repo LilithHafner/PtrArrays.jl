@@ -15,6 +15,11 @@ This package provides `malloc(T, dims...)` which allocates an `AbstractArray{T}`
 provided `dims`. If you want to avoid memory leaks, you can call `free` on the array once 
 you're done using it.
 
+A functional interface is available as `malloc(func, t, dims...)`, which takes care of
+allocation and deallocation automatically before/after calling `func(newly_allocated)`.
+The return value of `func(a)` must not contain any reference to `a`, to avoid
+use-after-free risk.
+
 Example usage
 
 ```julia
@@ -35,6 +40,9 @@ julia> malloc(Int, 4, 4)
  281474587621896  281474587621899  281474587621900  281474587621896
 
 julia> free(ans)
+
+julia> malloc(getindex, Int8)
+11
 ```
 
 Benchmarks:

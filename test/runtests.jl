@@ -61,6 +61,16 @@ end
     free(s)
 end
 
+@testset "functional form of `malloc`" begin
+    function func_for_malloc(a)
+        for i ∈ eachindex(a)
+            a[i] = i
+        end
+        reduce(*, a)
+    end
+    @test 6 === @inferred malloc(func_for_malloc, Int, 3)
+end
+
 function f(x, y)
     z = malloc(Int, x)
     z .= y
