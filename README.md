@@ -41,8 +41,23 @@ julia> malloc(Int, 4, 4)
 
 julia> free(ans)
 
-julia> malloc(getindex, Int8)
-11
+julia> function fact(n)
+           malloc(Int, n) do arr  # functional form of `malloc`, `free`s `arr` automatically
+               for i ∈ eachindex(arr)
+                   arr[i] = i
+               end
+               reduce(*, arr)
+           end
+       end
+fact (generic function with 1 method)
+
+julia> fact.(1:5)
+5-element Vector{Int64}:
+   1
+   2
+   6
+  24
+ 120
 ```
 
 Benchmarks:
