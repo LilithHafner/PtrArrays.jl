@@ -62,13 +62,11 @@ end
 end
 
 @testset "functional form of `malloc`" begin
-    function func_for_malloc(a)
-        for i ∈ eachindex(a)
-            a[i] = i
-        end
-        reduce(*, a)
+    function factorial_length(a)
+        a .= eachindex(a)
+        prod(a)
     end
-    @test 6 === @inferred malloc(func_for_malloc, Int, 3)
+    @test 120.0 === @inferred malloc(factorial_length, Float64, 5)
 end
 
 function f(x, y)
