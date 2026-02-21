@@ -92,30 +92,20 @@ Base.unsafe_convert(::Type{Ptr{T}}, p::PtrArray{T}) where T = p.ptr
 Base.elsize(::Type{P}) where P<:PtrArray = sizeof(eltype(P))
 
 """
-    malloc(func, T::Type, dims::Int...)
+    malloc(f, T::Type, dims::Int...)
 
-Functional interface taking care of allocation and deallocation automatically. Behavior:
+Calls `f` on the result of `malloc(T, dims...)` and `free`s the allocated array after `f` returns or throws.
 
-* Allocate a new array, say `a`, of element type `T` and dimensions `dims` using the C
-  stdlib's `malloc`.
+Returns the result of `f`
 
-    * `T` must be an `isbitstype`.
+!!! warning
 
-* Call `func(a)`.
-
-* Call `free(a)`, even if the call of `func` threw an exception.
-
-* Return whatever the call of `func` returned, if it returned.
-
-!!! warn
-
-    The caller must ensure that the value returned by `func(a)` will not contain a
-    reference to `a`, to avoid use-after-free bugs.
+    The caller must ensure that the argument passed to `f` is not used after `f` returns.
 """
-function malloc(func, ::Type{T}, dims::Int...) where T
+function malloc(f, ::Type{T}, dims::Int...) where T
     a = malloc(T, dims...)
     try
-        func(a)
+        f(a)
     finally
         free(a)
     end
