@@ -40,14 +40,13 @@ checked_dims(elsize::Int; message) = elsize
 function checked_dims(elsize::Int, d0::Int, d::Int...; message)
     len = checked_size_product((d0, d...))
     ok = len !== nothing
-    local overflow_final
     if ok
-        len, overflow_final = Base.mul_with_overflow(len, elsize)
+        len_final, overflow_final = Base.mul_with_overflow(len, elsize)
+        if !overflow_final
+            return len_final
+        end
     end
-    if !ok || overflow_final
-        throw_invalid_dimensions(message)
-    end
-    len
+    throw_invalid_dimensions(message)
 end
 
 """
