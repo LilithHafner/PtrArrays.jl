@@ -73,7 +73,7 @@ end
 # 130.125 ns (3 allocs: 7.875 KiB)
 ```
 
-The whole package's source code is only about 44 lines (excluding comments and whitespace),
+The whole package's source code is only about 56 lines (excluding comments and whitespace),
 half of which is re-implementing Julia's buggy `Core.checked_dims` function.
 [Read it here](https://github.com/LilithHafner/PtrArrays.jl/blob/main/src/PtrArrays.jl)
 
