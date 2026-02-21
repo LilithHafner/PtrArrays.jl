@@ -12,11 +12,9 @@ See also [Bumper.jl](https://github.com/MasonProtter/Bumper.jl) if you want to a
 overhead and don't like hide and seek.
 
 This package provides `malloc(T, dims...)` which allocates an `AbstractArray{T}` with the
-provided `dims`. If you want to avoid memory leaks, you can call `free` on the array once 
-you're done using it.
-
-A functional interface is also available as `malloc(func, t, dims...)`, taking care of
-allocation and deallocation automatically.
+provided `dims`. If you want to avoid memory leaks, you can call `free` on the array once
+you're done using it, or call `malloc(f, T, dims...)` to have the array automatically freed
+once `f` returns.
 
 Example usage
 
@@ -39,23 +37,11 @@ julia> malloc(Int, 4, 4)
 
 julia> free(ans)
 
-julia> function fact(n)
-           malloc(Int, n) do arr  # functional form of `malloc`, `free`s `arr` automatically
-               for i ∈ eachindex(arr)
-                   arr[i] = i
-               end
-               reduce(*, arr)
-           end
+julia> malloc(Float64, 5) do v # v is automatically freed
+           v .= eachindex(v)
+           prod(v)
        end
-fact (generic function with 1 method)
-
-julia> fact.(1:5)
-5-element Vector{Int64}:
-   1
-   2
-   6
-  24
- 120
+120.0
 ```
 
 Benchmarks:
