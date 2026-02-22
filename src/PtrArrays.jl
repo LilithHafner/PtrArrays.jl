@@ -91,4 +91,24 @@ end
 Base.unsafe_convert(::Type{Ptr{T}}, p::PtrArray{T}) where T = p.ptr
 Base.elsize(::Type{P}) where P<:PtrArray = sizeof(eltype(P))
 
+"""
+    malloc(f, T::Type, dims::Int...)
+
+Calls `f` on the result of `malloc(T, dims...)` and `free`s the allocated array after `f` returns or throws.
+
+Returns the result of `f`
+
+!!! warning
+
+    The caller must ensure that the argument passed to `f` is not used after `f` returns.
+"""
+function malloc(f, ::Type{T}, dims::Int...) where T
+    a = malloc(T, dims...)
+    try
+        f(a)
+    finally
+        free(a)
+    end
+end
+
 end

@@ -61,6 +61,14 @@ end
     free(s)
 end
 
+@testset "functional form of `malloc`" begin
+    function factorial_length(a)
+        a .= eachindex(a)
+        prod(a)
+    end
+    @test 120.0 === @inferred malloc(factorial_length, Float64, 5)
+end
+
 function f(x, y)
     z = malloc(Int, x)
     z .= y
