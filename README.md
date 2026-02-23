@@ -12,8 +12,9 @@ See also [Bumper.jl](https://github.com/MasonProtter/Bumper.jl) if you want to a
 overhead and don't like hide and seek.
 
 This package provides `malloc(T, dims...)` which allocates an `AbstractArray{T}` with the
-provided `dims`. If you want to avoid memory leaks, you can call `free` on the array once 
-you're done using it.
+provided `dims`. If you want to avoid memory leaks, you can call `free` on the array once
+you're done using it, or call `malloc(f, T, dims...)` to have the array automatically freed
+once `f` returns.
 
 Example usage
 
@@ -35,6 +36,12 @@ julia> malloc(Int, 4, 4)
  281474587621896  281474587621899  281474587621900  281474587621896
 
 julia> free(ans)
+
+julia> malloc(Float64, 5) do v # v is automatically freed
+           v .= eachindex(v)
+           prod(v)
+       end
+120.0
 ```
 
 Benchmarks:
@@ -66,7 +73,7 @@ end
 # 130.125 ns (3 allocs: 7.875 KiB)
 ```
 
-The whole package's source code is only about 44 lines (excluding comments and whitespace),
+The whole package's source code is only about 56 lines (excluding comments and whitespace),
 half of which is re-implementing Julia's buggy `Core.checked_dims` function.
 [Read it here](https://github.com/LilithHafner/PtrArrays.jl/blob/main/src/PtrArrays.jl)
 
