@@ -24,28 +24,23 @@ struct PtrArray{T, N} <: DenseArray{T, N}
     ptr::Ptr{T}
     size::NTuple{N, Int}
     function PtrArray(ptr::Ptr{T}, dims::Vararg{Int, N}; check_dims=true) where {T, N}
-        check_dims && checked_dims(sizeof(T), dims...; message=:PtrArray)
+        check_dims && checked_dims(dims..., sizeof(T); message=:PtrArray)
         new{T, N}(ptr, dims)
     end
 end
 
 # Because Core.checked_dims is buggy 😢
-checked_dims(elsize::Int; message) = elsize
-function checked_dims(elsize::Int, d0::Int, d::Int...; message)
-    overflow = false
-    neg = (d0+1) < 1
-    zero = false # of d0==0 we won't have overflow since we go left to right
-    len = d0
-    for di in d
-        len, o = Base.mul_with_overflow(len, di)
-        zero |= di === 0
-        overflow |= o
-        neg |= (di+1) < 1
+function checked_dims(d0::Int, ds::Vararg{Int, N}; message) where N
+    @static VERSION >= v"1.10" && Base.@assume_effects :terminates_locally
+    for d in ds
+        d0+1 < 1 && throw(ArgumentError("invalid $message dimensions"))
+        d0, o = Base.mul_with_overflow(d0, d)
+        if o
+            !isempty(ds) && any(iszero, Base.front(ds)) && return 0
+            throw(ArgumentError("invalid $message dimensions"))
+        end
     end
-    len, o = Base.mul_with_overflow(len, elsize)
-    err = o | neg | overflow & !zero
-    err && throw(ArgumentError("invalid $message dimensions"))
-    len
+    d0
 end
 
 """
@@ -60,7 +55,7 @@ to call [`free`](@ref) on it when it is no longer needed.
 """
 function malloc(::Type{T}, dims::Int...) where T
     isbitstype(T) || throw(ArgumentError("malloc only supports isbits types"))
-    ptr = Libc.malloc(checked_dims(sizeof(T), dims...; message=:malloc))
+    ptr = Libc.malloc(checked_dims(dims..., sizeof(T); message=:malloc))
     ptr === C_NULL && throw(OutOfMemoryError())
     PtrArray(Ptr{T}(ptr), dims..., check_dims=false)
 end
