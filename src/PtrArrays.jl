@@ -1,5 +1,7 @@
 module PtrArrays
 
+using CheckedSizeProduct: checked_size_product
+
 export malloc, free, PtrArray
 
 """
@@ -29,23 +31,22 @@ struct PtrArray{T, N} <: DenseArray{T, N}
     end
 end
 
+@noinline function throw_invalid_dimensions(message)
+    throw(ArgumentError("invalid $message dimensions"))
+end
+
 # Because Core.checked_dims is buggy 😢
 checked_dims(elsize::Int; message) = elsize
 function checked_dims(elsize::Int, d0::Int, d::Int...; message)
-    overflow = false
-    neg = (d0+1) < 1
-    zero = false # of d0==0 we won't have overflow since we go left to right
-    len = d0
-    for di in d
-        len, o = Base.mul_with_overflow(len, di)
-        zero |= di === 0
-        overflow |= o
-        neg |= (di+1) < 1
+    len = checked_size_product((d0, d...))
+    ok = len !== nothing
+    if ok
+        len_final, overflow_final = Base.mul_with_overflow(len, elsize)
+        if !overflow_final
+            return len_final
+        end
     end
-    len, o = Base.mul_with_overflow(len, elsize)
-    err = o | neg | overflow & !zero
-    err && throw(ArgumentError("invalid $message dimensions"))
-    len
+    throw_invalid_dimensions(message)
 end
 
 """
